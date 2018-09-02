@@ -73,6 +73,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+
+        fusedLocationClient.removeLocationUpdates(locationCallback)
+    }
+
     private fun validatePermissions(): Boolean {
         val isPermissionCoarseLocationGranted = ActivityCompat.
                 checkSelfPermission(this, coarseLocation) == PackageManager.PERMISSION_GRANTED
