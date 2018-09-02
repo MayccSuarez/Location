@@ -1,7 +1,8 @@
 package com.maycc.location
 
-import android.content.DialogInterface
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
+import android.location.Location
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
@@ -9,6 +10,8 @@ import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.widget.Toast
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.tasks.OnSuccessListener
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -29,7 +32,7 @@ class MainActivity : AppCompatActivity() {
         super.onStart()
 
         if (validatePermissions()) {
-            getLocation()
+            getUltimateLocation()
         } else {
             askPermissions()
         }
@@ -90,7 +93,20 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun getLocation() {
+    @SuppressLint("MissingPermission")
+    private fun getUltimateLocation() {
+        fusedLocationClient.lastLocation.addOnSuccessListener(this, object: OnSuccessListener<Location> {
 
+            override fun onSuccess(location: Location?) {
+                if (location != null) {
+                    val latitude = location.latitude.toString()
+                    val longitude      = location.longitude.toString()
+
+                    tvLocation.text = "$latitude $longitude"
+                } else {
+                    Toast.makeText(applicationContext, "No se ha podido obtener la última ubicación", Toast.LENGTH_SHORT).show()
+                }
+            }
+        } )
     }
 }
